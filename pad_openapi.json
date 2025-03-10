@@ -1,0 +1,3400 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Paper Analytical Devices",
+    "contact": {
+      "name": "James Sweet",
+      "email": "jsweet@nd.edu"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "2.0.0"
+  },
+  "paths": {
+    "/api/v1/cards": {
+      "post": {
+        "tags": [
+          "Cards"
+        ],
+        "summary": "Create Card",
+        "operationId": "create_card_api_v1_cards_post",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_card_api_v1_cards_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/CardUploadSuccess"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ResultError"
+                    }
+                  ],
+                  "title": "Response Create Card Api V1 Cards Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "APIKeyBody": []
+          }
+        ]
+      }
+    },
+    "/api/v1/neural-networks": {
+      "get": {
+        "tags": [
+          "Neural Networks"
+        ],
+        "summary": "Get a list of all neural networks",
+        "operationId": "get_all_api_v1_neural_networks_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "title": "Only Names",
+              "default": false
+            },
+            "name": "only_names",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/NameListList"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NeuralNetworkList"
+                    }
+                  ],
+                  "title": "Response Get All Api V1 Neural Networks Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Get a list of all projects",
+        "operationId": "get_all_api_v1_projects_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "title": "Only Names",
+              "default": false
+            },
+            "name": "only_names",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NameListList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{name}": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Get cards for a specific project",
+        "operationId": "get_name_api_v1_projects__name__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            },
+            "name": "name",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/CardListV1"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ResultError"
+                    }
+                  ],
+                  "title": "Response Get Name Api V1 Projects  Name  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/auth/login": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Oauth Login",
+        "operationId": "oauth_login_api_v2_auth_login_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/auth/callback": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Oauth Callback",
+        "operationId": "oauth_callback_api_v2_auth_callback_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/auth/logout": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Oauth Logout",
+        "operationId": "oauth_logout_api_v2_auth_logout_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/auth/test": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Oauth Test",
+        "operationId": "oauth_test_api_v2_auth_test_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/cards/issues": {
+      "get": {
+        "tags": [
+          "Cards",
+          "Cards"
+        ],
+        "summary": "Get a list of all issues",
+        "operationId": "get_all_api_v2_cards_issues_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Skip",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Limit",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CardIssue"
+                  },
+                  "type": "array",
+                  "title": "Response 200 Get All Api V2 Cards Issues Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Cards",
+          "Cards"
+        ],
+        "summary": "Create a new card issue",
+        "operationId": "create_instance_api_v2_cards_issues_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardIssueInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardIssue"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/cards/issues/{id}": {
+      "get": {
+        "tags": [
+          "Cards",
+          "Cards",
+          "Cards"
+        ],
+        "summary": "Get a single card issue",
+        "operationId": "get_instance_api_v2_cards_issues__id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardIssue"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cards",
+          "Cards"
+        ],
+        "summary": "Delete a card issue",
+        "operationId": "delete_instance_api_v2_cards_issues__id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardIssue"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Cards",
+          "Cards"
+        ],
+        "summary": "Update part of a single card issue",
+        "operationId": "patch_instance_api_v2_cards_issues__id__patch",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardIssueInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardIssue"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/cards": {
+      "get": {
+        "tags": [
+          "Cards"
+        ],
+        "summary": "Get a list of cards",
+        "operationId": "get_all_api_v2_cards_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Skip",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Limit",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Card"
+                  },
+                  "type": "array",
+                  "title": "Response Get All Api V2 Cards Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Cards"
+        ],
+        "summary": "Create a new card",
+        "operationId": "create_instance_api_v2_cards_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Card"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/cards/{id}": {
+      "get": {
+        "tags": [
+          "Cards",
+          "Cards"
+        ],
+        "summary": "Get a single card",
+        "operationId": "get_instance_api_v2_cards__id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Card"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cards"
+        ],
+        "summary": "Delete a card",
+        "operationId": "delete_instance_api_v2_cards__id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Card"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/card-groups": {
+      "get": {
+        "tags": [
+          "Cards"
+        ],
+        "summary": "Get a list of all printed card groups",
+        "operationId": "get_all_api_v2_card_groups_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Skip",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Limit",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CardInfo"
+                  },
+                  "type": "array",
+                  "title": "Response Get All Api V2 Card Groups Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Cards"
+        ],
+        "summary": "Create a new printed card group",
+        "operationId": "create_instance_api_v2_card_groups_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CardGroupInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/card-groups/next-available": {
+      "get": {
+        "tags": [
+          "Cards"
+        ],
+        "summary": "Get the next available id for a card group",
+        "operationId": "get_next_available_api_v2_card_groups_next_available_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NextAvailable"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/card-groups/{id}": {
+      "get": {
+        "tags": [
+          "Cards"
+        ],
+        "summary": "Get a single card group",
+        "operationId": "get_instance_api_v2_card_groups__id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cards"
+        ],
+        "summary": "Delete a printed card group",
+        "operationId": "delete_instance_api_v2_card_groups__id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CardInfo"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/neural-networks": {
+      "get": {
+        "tags": [
+          "Neural Networks"
+        ],
+        "summary": "Get a list of all neural networks",
+        "operationId": "get_all_api_v2_neural_networks_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Skip",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Limit",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/NeuralNetwork"
+                  },
+                  "type": "array",
+                  "title": "Response Get All Api V2 Neural Networks Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Neural Networks"
+        ],
+        "summary": "Create a new neural network",
+        "operationId": "create_instance_api_v2_neural_networks_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NeuralNetworkInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NeuralNetwork"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/neural-networks/{id}": {
+      "get": {
+        "tags": [
+          "Neural Networks"
+        ],
+        "summary": "Get a single network",
+        "operationId": "get_instance_api_v2_neural_networks__id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NeuralNetwork"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Neural Networks"
+        ],
+        "summary": "Delete a reagent",
+        "operationId": "delete_instance_api_v2_neural_networks__id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NeuralNetwork"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/layouts": {
+      "get": {
+        "tags": [
+          "Layout"
+        ],
+        "summary": "Get a list of all card layouts",
+        "operationId": "get_all_api_v2_layouts_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Skip",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Limit",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Layout"
+                  },
+                  "type": "array",
+                  "title": "Response Get All Api V2 Layouts Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Layout"
+        ],
+        "summary": "Create a new card layout",
+        "operationId": "create_instance_api_v2_layouts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LayoutInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Layout"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/layouts/{id}": {
+      "get": {
+        "tags": [
+          "Layout"
+        ],
+        "summary": "Get a single card layout",
+        "operationId": "get_instance_api_v2_layouts__id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Layout"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Layout"
+        ],
+        "summary": "Delete Entry",
+        "operationId": "delete_entry_api_v2_layouts__id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Layout"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/projects": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Get a list of all projects",
+        "operationId": "get_all_api_v2_projects_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Skip",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Limit",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Project"
+                  },
+                  "type": "array",
+                  "title": "Response 200 Get All Api V2 Projects Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Create a new project",
+        "operationId": "create_instance_api_v2_projects_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/projects/{id}": {
+      "get": {
+        "tags": [
+          "Projects",
+          "Projects"
+        ],
+        "summary": "Get a single project",
+        "operationId": "get_instance_api_v2_projects__id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Update a single project entirely",
+        "operationId": "update_instance_api_v2_projects__id__put",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Delete a project",
+        "operationId": "delete_instance_api_v2_projects__id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Update part of a single project",
+        "operationId": "patch_instance_api_v2_projects__id__patch",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/projects/{id}/cards": {
+      "get": {
+        "tags": [
+          "Projects",
+          "Cards"
+        ],
+        "summary": "Get a list of cards associated with a single project",
+        "operationId": "get_instance_cards_api_v2_projects__id__cards_get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Card"
+                  },
+                  "type": "array",
+                  "title": "Response 200 Get Instance Cards Api V2 Projects  Id  Cards Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/reagents": {
+      "get": {
+        "tags": [
+          "Reagents"
+        ],
+        "summary": "Get a list of all reagents",
+        "operationId": "get_all_api_v2_reagents_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Skip",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Limit",
+              "default": 100
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Reagent"
+                  },
+                  "type": "array",
+                  "title": "Response Get All Api V2 Reagents Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Reagents"
+        ],
+        "summary": "Create a new reagent",
+        "operationId": "create_instance_api_v2_reagents_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReagentInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reagent"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/reagents/{id}": {
+      "get": {
+        "tags": [
+          "Reagents"
+        ],
+        "summary": "Get a single reagent",
+        "operationId": "get_instance_api_v2_reagents__id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reagent"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Reagents"
+        ],
+        "summary": "Delete a reagent",
+        "operationId": "delete_instance_api_v2_reagents__id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reagent"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/samples": {
+      "get": {
+        "tags": [
+          "Samples"
+        ],
+        "summary": "Get a list of all samples",
+        "operationId": "get_all_api_v2_samples_get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Skip",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "title": "Limit",
+              "default": 1000
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Sample"
+                  },
+                  "type": "array",
+                  "title": "Response Get All Api V2 Samples Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Samples"
+        ],
+        "summary": "Create a new sample",
+        "operationId": "create_instance_api_v2_samples_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SampleInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sample"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    },
+    "/api/v2/samples/{id}": {
+      "get": {
+        "tags": [
+          "Samples"
+        ],
+        "summary": "Get a single sample",
+        "operationId": "get_instance_api_v2_samples__id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sample"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Samples"
+        ],
+        "summary": "Delete a sample",
+        "operationId": "delete_instance_api_v2_samples__id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id"
+            },
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sample"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "OAuth2Token": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Body_create_card_api_v1_cards_post": {
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "title": "File Name"
+          },
+          "file_name2": {
+            "type": "string",
+            "title": "File Name2",
+            "default": ""
+          },
+          "test_name": {
+            "type": "string",
+            "title": "Test Name",
+            "default": "unknown"
+          },
+          "category_name": {
+            "type": "string",
+            "title": "Category Name",
+            "default": "unknown"
+          },
+          "camera1": {
+            "type": "string",
+            "title": "Camera1",
+            "default": ""
+          },
+          "camera2": {
+            "type": "string",
+            "title": "Camera2",
+            "default": ""
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes",
+            "default": ""
+          },
+          "sample_name": {
+            "type": "string",
+            "title": "Sample Name",
+            "default": ""
+          },
+          "sampleid": {
+            "type": "integer",
+            "title": "Sampleid",
+            "default": 0
+          },
+          "uploaded_file": {
+            "type": "string",
+            "title": "Uploaded File"
+          },
+          "uploaded_file2": {
+            "type": "string",
+            "title": "Uploaded File2",
+            "default": ""
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity",
+            "default": 100
+          },
+          "hash_file1": {
+            "type": "string",
+            "title": "Hash File1",
+            "default": ""
+          },
+          "hash_file2": {
+            "type": "string",
+            "title": "Hash File2",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_name",
+          "uploaded_file"
+        ],
+        "title": "Body_create_card_api_v1_cards_post"
+      },
+      "Card": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "sample_name": {
+            "type": "string",
+            "title": "Sample Name"
+          },
+          "test_name": {
+            "type": "string",
+            "title": "Test Name"
+          },
+          "user_name": {
+            "type": "string",
+            "title": "User Name"
+          },
+          "date_of_creation": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Date Of Creation"
+          },
+          "raw_file_location": {
+            "type": "string",
+            "title": "Raw File Location"
+          },
+          "processed_file_location": {
+            "type": "string",
+            "title": "Processed File Location"
+          },
+          "processing_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Processing Date"
+          },
+          "camera_type_1": {
+            "type": "string",
+            "title": "Camera Type 1"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          },
+          "sample_id": {
+            "type": "integer",
+            "title": "Sample Id",
+            "default": 0
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity",
+            "default": 100
+          },
+          "deleted": {
+            "type": "boolean",
+            "title": "Deleted",
+            "default": false
+          },
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          },
+          "issue": {
+            "$ref": "#/components/schemas/CardIssue"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "sample_name",
+          "test_name",
+          "user_name",
+          "date_of_creation",
+          "raw_file_location",
+          "camera_type_1",
+          "notes"
+        ],
+        "title": "Card"
+      },
+      "CardGroupInput": {
+        "properties": {
+          "card_id": {
+            "type": "integer",
+            "title": "Card Id"
+          },
+          "user": {
+            "type": "string",
+            "title": "User"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "assigned_test_id": {
+            "type": "integer",
+            "title": "Assigned Test Id"
+          },
+          "offset_x": {
+            "type": "number",
+            "title": "Offset X"
+          },
+          "offset_y": {
+            "type": "number",
+            "title": "Offset Y"
+          },
+          "project": {
+            "type": "string",
+            "title": "Project"
+          },
+          "annotation": {
+            "type": "string",
+            "title": "Annotation"
+          },
+          "comment": {
+            "type": "string",
+            "title": "Comment"
+          },
+          "card_id_end": {
+            "type": "integer",
+            "title": "Card Id End",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "card_id",
+          "date",
+          "assigned_test_id",
+          "offset_x",
+          "offset_y",
+          "comment"
+        ],
+        "title": "CardGroupInput"
+      },
+      "CardInfo": {
+        "properties": {
+          "card_id": {
+            "type": "integer",
+            "title": "Card Id"
+          },
+          "user": {
+            "type": "string",
+            "title": "User"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "assigned_test_id": {
+            "type": "integer",
+            "title": "Assigned Test Id"
+          },
+          "offset_x": {
+            "type": "number",
+            "title": "Offset X"
+          },
+          "offset_y": {
+            "type": "number",
+            "title": "Offset Y"
+          },
+          "project": {
+            "type": "string",
+            "title": "Project"
+          },
+          "annotation": {
+            "type": "string",
+            "title": "Annotation"
+          },
+          "comment": {
+            "type": "string",
+            "title": "Comment"
+          },
+          "card_id_end": {
+            "type": "integer",
+            "title": "Card Id End",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "card_id",
+          "date",
+          "assigned_test_id",
+          "offset_x",
+          "offset_y",
+          "comment"
+        ],
+        "title": "CardInfo"
+      },
+      "CardInput": {
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "title": "File Name"
+          },
+          "file_name2": {
+            "type": "string",
+            "title": "File Name2",
+            "default": ""
+          },
+          "test_name": {
+            "type": "string",
+            "title": "Test Name",
+            "default": "unknown"
+          },
+          "category_name": {
+            "type": "string",
+            "title": "Category Name",
+            "default": "unknown"
+          },
+          "camera1": {
+            "type": "string",
+            "title": "Camera1",
+            "default": ""
+          },
+          "camera2": {
+            "type": "string",
+            "title": "Camera2",
+            "default": ""
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes",
+            "default": ""
+          },
+          "sample_name": {
+            "type": "string",
+            "title": "Sample Name",
+            "default": ""
+          },
+          "sampleid": {
+            "type": "integer",
+            "title": "Sampleid",
+            "default": 0
+          },
+          "uploaded_file": {
+            "type": "string",
+            "title": "Uploaded File"
+          },
+          "uploaded_file2": {
+            "type": "string",
+            "title": "Uploaded File2",
+            "default": ""
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity",
+            "default": 100
+          },
+          "hash_file1": {
+            "type": "string",
+            "title": "Hash File1",
+            "default": ""
+          },
+          "hash_file2": {
+            "type": "string",
+            "title": "Hash File2",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "file_name",
+          "uploaded_file"
+        ],
+        "title": "CardInput"
+      },
+      "CardIssue": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description"
+        ],
+        "title": "CardIssue"
+      },
+      "CardIssueInput": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "CardIssueInput"
+      },
+      "CardListV1": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/CardResultV1"
+            },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "data"
+        ],
+        "title": "CardListV1"
+      },
+      "CardResultV1": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "sample_name": {
+            "type": "string",
+            "title": "Sample Name"
+          },
+          "test_name": {
+            "type": "string",
+            "title": "Test Name"
+          },
+          "user_name": {
+            "type": "string",
+            "title": "User Name"
+          },
+          "date_of_creation": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Date Of Creation"
+          },
+          "picture_1_location": {
+            "type": "string",
+            "title": "Picture 1 Location"
+          },
+          "processed_file_location": {
+            "type": "string",
+            "title": "Processed File Location"
+          },
+          "processing_date": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Processing Date"
+          },
+          "camera_type_1": {
+            "type": "string",
+            "title": "Camera Type 1"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "sample_id": {
+            "type": "integer",
+            "title": "Sample Id",
+            "default": 0
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity",
+            "default": 100
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "sample_name",
+          "test_name",
+          "user_name",
+          "date_of_creation",
+          "picture_1_location",
+          "camera_type_1",
+          "notes",
+          "category"
+        ],
+        "title": "CardResultV1"
+      },
+      "CardUploadSuccess": {
+        "properties": {
+          "md5": {
+            "type": "string",
+            "title": "Md5"
+          },
+          "file": {
+            "type": "string",
+            "title": "File"
+          },
+          "project_card": {
+            "type": "string",
+            "title": "Project Card"
+          },
+          "Sample name": {
+            "type": "string",
+            "title": "Sample Name"
+          },
+          "Test name": {
+            "type": "string",
+            "title": "Test Name"
+          },
+          "Category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "Camera for image 1": {
+            "type": "string",
+            "title": "Camera For Image 1"
+          },
+          "Camera for image 2": {
+            "type": "string",
+            "title": "Camera For Image 2"
+          },
+          "Notes": {
+            "type": "string",
+            "title": "Notes"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "md5",
+          "file",
+          "Sample name",
+          "Test name",
+          "Category",
+          "Camera for image 1",
+          "Notes",
+          "status"
+        ],
+        "title": "CardUploadSuccess"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "Layout": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "test": {
+            "type": "string",
+            "title": "Test"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          },
+          "reagent_lane_1": {
+            "type": "string",
+            "title": "Reagent Lane 1"
+          },
+          "reagent_lane_2": {
+            "type": "string",
+            "title": "Reagent Lane 2"
+          },
+          "reagent_lane_3": {
+            "type": "string",
+            "title": "Reagent Lane 3"
+          },
+          "reagent_lane_4": {
+            "type": "string",
+            "title": "Reagent Lane 4"
+          },
+          "reagent_lane_5": {
+            "type": "string",
+            "title": "Reagent Lane 5"
+          },
+          "reagent_lane_6": {
+            "type": "string",
+            "title": "Reagent Lane 6"
+          },
+          "reagent_lane_7": {
+            "type": "string",
+            "title": "Reagent Lane 7"
+          },
+          "reagent_lane_8": {
+            "type": "string",
+            "title": "Reagent Lane 8"
+          },
+          "reagent_lane_9": {
+            "type": "string",
+            "title": "Reagent Lane 9"
+          },
+          "reagent_lane_10": {
+            "type": "string",
+            "title": "Reagent Lane 10"
+          },
+          "reagent_lane_11": {
+            "type": "string",
+            "title": "Reagent Lane 11"
+          },
+          "reagent_lane_12": {
+            "type": "string",
+            "title": "Reagent Lane 12"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "test",
+          "notes",
+          "reagent_lane_1",
+          "reagent_lane_2",
+          "reagent_lane_3",
+          "reagent_lane_4",
+          "reagent_lane_5",
+          "reagent_lane_6",
+          "reagent_lane_7",
+          "reagent_lane_8",
+          "reagent_lane_9",
+          "reagent_lane_10",
+          "reagent_lane_11",
+          "reagent_lane_12"
+        ],
+        "title": "Layout"
+      },
+      "LayoutInput": {
+        "properties": {
+          "test": {
+            "type": "string",
+            "title": "Test"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          },
+          "reagent_lane_1": {
+            "type": "string",
+            "title": "Reagent Lane 1"
+          },
+          "reagent_lane_2": {
+            "type": "string",
+            "title": "Reagent Lane 2"
+          },
+          "reagent_lane_3": {
+            "type": "string",
+            "title": "Reagent Lane 3"
+          },
+          "reagent_lane_4": {
+            "type": "string",
+            "title": "Reagent Lane 4"
+          },
+          "reagent_lane_5": {
+            "type": "string",
+            "title": "Reagent Lane 5"
+          },
+          "reagent_lane_6": {
+            "type": "string",
+            "title": "Reagent Lane 6"
+          },
+          "reagent_lane_7": {
+            "type": "string",
+            "title": "Reagent Lane 7"
+          },
+          "reagent_lane_8": {
+            "type": "string",
+            "title": "Reagent Lane 8"
+          },
+          "reagent_lane_9": {
+            "type": "string",
+            "title": "Reagent Lane 9"
+          },
+          "reagent_lane_10": {
+            "type": "string",
+            "title": "Reagent Lane 10"
+          },
+          "reagent_lane_11": {
+            "type": "string",
+            "title": "Reagent Lane 11"
+          },
+          "reagent_lane_12": {
+            "type": "string",
+            "title": "Reagent Lane 12"
+          }
+        },
+        "type": "object",
+        "required": [
+          "test",
+          "notes",
+          "reagent_lane_1",
+          "reagent_lane_2",
+          "reagent_lane_3",
+          "reagent_lane_4",
+          "reagent_lane_5",
+          "reagent_lane_6",
+          "reagent_lane_7",
+          "reagent_lane_8",
+          "reagent_lane_9",
+          "reagent_lane_10",
+          "reagent_lane_11",
+          "reagent_lane_12"
+        ],
+        "title": "LayoutInput"
+      },
+      "NameListList": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "list": {
+            "items": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "array",
+            "title": "List"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "list"
+        ],
+        "title": "NameListList"
+      },
+      "NeuralNetwork": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "drugs_size": {
+            "type": "integer",
+            "title": "Drugs Size"
+          },
+          "drugs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Drugs"
+          },
+          "labels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Labels"
+          },
+          "lanes_excluded": {
+            "type": "string",
+            "title": "Lanes Excluded"
+          },
+          "weights": {
+            "type": "string",
+            "title": "Weights"
+          },
+          "weights_url": {
+            "type": "string",
+            "title": "Weights Url"
+          },
+          "image_mean": {
+            "type": "string",
+            "title": "Image Mean"
+          },
+          "image_size": {
+            "type": "string",
+            "title": "Image Size"
+          },
+          "architecture": {
+            "type": "string",
+            "title": "Architecture"
+          },
+          "brightness": {
+            "type": "number",
+            "title": "Brightness",
+            "default": 0
+          },
+          "type": {
+            "$ref": "#/components/schemas/NeuralNetworkType"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "test": {
+            "type": "string",
+            "title": "Test"
+          },
+          "training_set": {
+            "type": "string",
+            "title": "Training Set"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "SHA256": {
+            "type": "string",
+            "title": "Sha256"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "drugs_size",
+          "drugs",
+          "lanes_excluded",
+          "weights",
+          "type",
+          "description",
+          "test"
+        ],
+        "title": "NeuralNetwork"
+      },
+      "NeuralNetworkInput": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "drugs_size": {
+            "type": "integer",
+            "title": "Drugs Size"
+          },
+          "drugs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Drugs"
+          },
+          "labels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Labels"
+          },
+          "lanes_excluded": {
+            "type": "string",
+            "title": "Lanes Excluded"
+          },
+          "weights": {
+            "type": "string",
+            "title": "Weights"
+          },
+          "weights_url": {
+            "type": "string",
+            "title": "Weights Url"
+          },
+          "image_mean": {
+            "type": "string",
+            "title": "Image Mean"
+          },
+          "image_size": {
+            "type": "string",
+            "title": "Image Size"
+          },
+          "architecture": {
+            "type": "string",
+            "title": "Architecture"
+          },
+          "brightness": {
+            "type": "number",
+            "title": "Brightness",
+            "default": 0
+          },
+          "type": {
+            "$ref": "#/components/schemas/NeuralNetworkType"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "test": {
+            "type": "string",
+            "title": "Test"
+          },
+          "training_set": {
+            "type": "string",
+            "title": "Training Set"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "SHA256": {
+            "type": "string",
+            "title": "Sha256"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "drugs_size",
+          "drugs",
+          "lanes_excluded",
+          "weights",
+          "type",
+          "description",
+          "test"
+        ],
+        "title": "NeuralNetworkInput"
+      },
+      "NeuralNetworkList": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "list": {
+            "items": {
+              "$ref": "#/components/schemas/NeuralNetworkV1"
+            },
+            "type": "array",
+            "title": "List"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "list"
+        ],
+        "title": "NeuralNetworkList"
+      },
+      "NeuralNetworkType": {
+        "type": "string",
+        "enum": [
+          "tensorflow",
+          "tf_lite",
+          "caffe",
+          "pls"
+        ],
+        "title": "NeuralNetworkType",
+        "description": "An enumeration."
+      },
+      "NeuralNetworkV1": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "type": {
+            "$ref": "#/components/schemas/NeuralNetworkType"
+          },
+          "drugs": {
+            "type": "string",
+            "title": "Drugs"
+          },
+          "weights_url": {
+            "type": "string",
+            "title": "Weights Url"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "SHA256": {
+            "type": "string",
+            "title": "Sha256"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "version",
+          "type",
+          "drugs",
+          "description",
+          "SHA256"
+        ],
+        "title": "NeuralNetworkV1"
+      },
+      "NextAvailable": {
+        "properties": {
+          "nextid": {
+            "type": "integer",
+            "title": "Nextid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nextid"
+        ],
+        "title": "NextAvailable"
+      },
+      "Project": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "user_name": {
+            "type": "string",
+            "title": "User Name"
+          },
+          "project_name": {
+            "type": "string",
+            "title": "Project Name"
+          },
+          "annotation": {
+            "type": "string",
+            "title": "Annotation"
+          },
+          "test_name": {
+            "type": "string",
+            "title": "Test Name"
+          },
+          "sample_names": {
+            "type": "object",
+            "title": "Sample Names"
+          },
+          "neutral_filler": {
+            "type": "string",
+            "title": "Neutral Filler"
+          },
+          "qpc20": {
+            "type": "integer",
+            "title": "Qpc20",
+            "default": 0
+          },
+          "qpc50": {
+            "type": "integer",
+            "title": "Qpc50",
+            "default": 0
+          },
+          "qpc80": {
+            "type": "integer",
+            "title": "Qpc80",
+            "default": 0
+          },
+          "qpc100": {
+            "type": "integer",
+            "title": "Qpc100",
+            "default": 1
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "user_name",
+          "test_name"
+        ],
+        "title": "Project"
+      },
+      "ProjectInput": {
+        "properties": {
+          "user_name": {
+            "type": "string",
+            "title": "User Name"
+          },
+          "project_name": {
+            "type": "string",
+            "title": "Project Name"
+          },
+          "annotation": {
+            "type": "string",
+            "title": "Annotation"
+          },
+          "test_name": {
+            "type": "string",
+            "title": "Test Name"
+          },
+          "sample_names": {
+            "type": "string",
+            "format": "json-string",
+            "title": "Sample Names"
+          },
+          "neutral_filler": {
+            "type": "string",
+            "title": "Neutral Filler"
+          },
+          "qpc20": {
+            "type": "integer",
+            "title": "Qpc20",
+            "default": 0
+          },
+          "qpc50": {
+            "type": "integer",
+            "title": "Qpc50",
+            "default": 0
+          },
+          "qpc80": {
+            "type": "integer",
+            "title": "Qpc80",
+            "default": 0
+          },
+          "qpc100": {
+            "type": "integer",
+            "title": "Qpc100",
+            "default": 1
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_name",
+          "test_name"
+        ],
+        "title": "ProjectInput"
+      },
+      "ProjectUpdate": {
+        "properties": {
+          "user_name": {
+            "type": "string",
+            "title": "User Name"
+          },
+          "project_name": {
+            "type": "string",
+            "title": "Project Name"
+          },
+          "annotation": {
+            "type": "string",
+            "title": "Annotation"
+          },
+          "test_name": {
+            "type": "string",
+            "title": "Test Name"
+          },
+          "sample_names": {
+            "type": "string",
+            "format": "json-string",
+            "title": "Sample Names"
+          },
+          "neutral_filler": {
+            "type": "string",
+            "title": "Neutral Filler"
+          },
+          "qpc20": {
+            "type": "integer",
+            "title": "Qpc20"
+          },
+          "qpc50": {
+            "type": "integer",
+            "title": "Qpc50"
+          },
+          "qpc80": {
+            "type": "integer",
+            "title": "Qpc80"
+          },
+          "qpc100": {
+            "type": "integer",
+            "title": "Qpc100"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "title": "ProjectUpdate"
+      },
+      "Reagent": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "reagent": {
+            "type": "string",
+            "title": "Reagent"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "reagent"
+        ],
+        "title": "Reagent"
+      },
+      "ReagentInput": {
+        "properties": {
+          "reagent": {
+            "type": "string",
+            "title": "Reagent"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "reagent"
+        ],
+        "title": "ReagentInput"
+      },
+      "ResultError": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "error_description": {
+            "type": "string",
+            "title": "Error Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "error_description"
+        ],
+        "title": "ResultError"
+      },
+      "Sample": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "drug": {
+            "type": "string",
+            "title": "Drug"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "drug"
+        ],
+        "title": "Sample"
+      },
+      "SampleInput": {
+        "properties": {
+          "drug": {
+            "type": "string",
+            "title": "Drug"
+          }
+        },
+        "type": "object",
+        "required": [
+          "drug"
+        ],
+        "title": "SampleInput"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "APIKeyBody": {
+        "type": "apiKey",
+        "in": "query",
+        "name": "api_key"
+      },
+      "OAuth2Token": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "scopes": {},
+            "tokenUrl": "https://paper-analytical-devices.us.auth0.com/oauth/token"
+          },
+          "authorizationCode": {
+            "scopes": {},
+            "authorizationUrl": "https://paper-analytical-devices.us.auth0.com/authorize",
+            "tokenUrl": "https://paper-analytical-devices.us.auth0.com/oauth/token"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Authentication and Authorization"
+    },
+    {
+      "name": "Cards",
+      "description": "Functions relating to PAD Cards"
+    },
+    {
+      "name": "Neural Networks",
+      "description": "Functions relating to Neural Networks"
+    },
+    {
+      "name": "Projects",
+      "description": "Functions relating to Projects"
+    },
+    {
+      "name": "Reagents",
+      "description": "Functions relating to Reagents"
+    },
+    {
+      "name": "Samples",
+      "description": "Functions relating to Samples"
+    },
+    {
+      "name": "Layout",
+      "description": "Design and layout of a Card"
+    }
+  ]
+}
+
