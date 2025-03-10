@@ -111,28 +111,11 @@ Managed automatically by `uv` through Claude Desktop:
 
 When using the PAD server with Claude Desktop, you can have natural conversations about your PAD cards. Here are some example interactions:
 
-```
-User: Can you list all PAD cards that use Camera Type 1?
+![alt text](imgs/qa1.png)
 
-Claude: I'll help you find all cards that use Camera Type 1.
-Let me search through the available cards...
+![alt text](imgs/qa2.png)
 
-I found the following cards:
-- Card 42 - Sample A123
-- Card 56 - Sample B456
-- Card 78 - Sample C789
-
-User: Can you show me the image for card 51866?
-
-Claude: I'll retrieve and process the image for card 51866.
-I've processed the image, which is now saved at ~/Documents/pad_storage/card_51866.jpg
-The image dimensions are 300x500 pixels.
-```
-
-Behind the scenes, Claude uses these MCP tools:
-- `get_v2_cards()` to list and filter cards
-- `get_card_image_by_id()` to process and display images
-- Automatic image scaling for Claude Desktop's display
+![alt text](imgs/qa3.png)
 
 ### Working with Cards
 
