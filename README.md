@@ -44,7 +44,7 @@ To use this server with Claude Desktop, add the following configuration to your 
             "--directory",
             "<path-to-repository>",
             "run",
-            "pad.py"
+            "main.py"
         ],
         "env": {
             "FILESYSTEM_STORAGE": "<path-to-storage-directory>"
@@ -109,27 +109,30 @@ Managed automatically by `uv` through Claude Desktop:
 
 ### Using with Claude Desktop
 
-```python
-# Example conversation with Claude
+When using the PAD server with Claude Desktop, you can have natural conversations about your PAD cards. Here are some example interactions:
+
+```
 User: Can you list all PAD cards that use Camera Type 1?
 
 Claude: I'll help you find all cards that use Camera Type 1.
+Let me search through the available cards...
 
-result = await get_v2_cards()
-if result["success"]:
-    camera1_cards = [card for card in result["data"] if card["camera"] == "Camera Type 1"]
-    for card in camera1_cards:
-        print(f"Found card {card['id']} - {card['sample']}")
+I found the following cards:
+- Card 42 - Sample A123
+- Card 56 - Sample B456
+- Card 78 - Sample C789
 
-User: Can you show me the image for card 42?
+User: Can you show me the image for card 51866?
 
-Claude: I'll retrieve and process the image for card 42.
-
-image = await get_card_image_by_id(42)
-if image["success"]:
-    print(f"Image processed and saved to {image['data']['image_path']}")
-    print(f"Image dimensions: {image['data']['width']}x{image['data']['height']}")
+Claude: I'll retrieve and process the image for card 51866.
+I've processed the image, which is now saved at ~/Documents/pad_storage/card_51866.jpg
+The image dimensions are 300x500 pixels.
 ```
+
+Behind the scenes, Claude uses these MCP tools:
+- `get_v2_cards()` to list and filter cards
+- `get_card_image_by_id()` to process and display images
+- Automatic image scaling for Claude Desktop's display
 
 ### Working with Cards
 
@@ -164,15 +167,29 @@ if image_result["success"]:
 
 ### Working with Geometry
 
-```python
-# Load and scale card geometry
-geometry = load_card_geometry("path/to/geometry.json")
+When using with Claude Desktop, the geometry is automatically scaled to match Claude's image width restrictions (300px). This ensures consistent analysis regardless of the display environment.
 
-# Scale coordinates by 1.5x
-scaled_geometry = multiply_coordinates(geometry, 1.5)
-print(f"Original lane 1 position: {geometry['lanes'][0]['x']}, {geometry['lanes'][0]['y']}")
-print(f"Scaled lane 1 position: {scaled_geometry['lanes'][0]['x']}, {scaled_geometry['lanes'][0]['y']}")
+```python
+# Load card geometry (automatically scaled for Claude Desktop)
+result = load_card_geometry()
+if result["success"]:
+    geometry = result["data"]
+    # Access lane positions (example with lane A)
+    lane_a = geometry["lane_boxes"][0]["A"]
+    print(f"Lane A coordinates: {lane_a}")
+    
+    # Scale coordinates if needed for different display sizes
+    scaled = multiply_coordinates(geometry, 1.5)
+    scaled_lane_a = scaled["lane_boxes"][0]["A"]
+    print(f"Scaled lane A: {scaled_lane_a}")
 ```
+
+The geometry includes:
+- Card dimensions (scaled from 730x1220)
+- 12 lanes (A through L) with precise coordinates
+- Fiducial markers for alignment
+- QR code position
+- Swipe line location
 
 ### Error Handling
 
