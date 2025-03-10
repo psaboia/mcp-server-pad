@@ -38,25 +38,28 @@ To use this server with Claude Desktop, add the following configuration to your 
 
 ```json
 {
+  "mcpServers": {
     "pad": {
-        "command": "<path-to-uv>",
-        "args": [
-            "--directory",
-            "<path-to-repository>",
-            "run",
-            "main.py"
-        ],
-        "env": {
-            "FILESYSTEM_STORAGE": "<path-to-storage-directory>"
-        }
+      "command": "<path-to-uv>",
+      "args": [
+        "--directory",
+        "<path-to-repository>",
+        "run",
+        "main.py"
+      ],
+      "env": {
+        "FILESYSTEM_STORAGE": "<path-to-storage-directory>"
+      }
     }
+  }
 }
+
 ```
 
 Configuration parameters:
 - `<path-to-uv>`: Path to your uv installation (e.g., `~/.local/bin/uv`)
 - `<path-to-repository>`: Absolute path to where you cloned this repository
-- `<path-to-storage-directory>`: Directory where you want to store PAD files (optional)
+- `<path-to-storage-directory>`: Directory where you want to store PAD files (defaults to `~/Documents/pad_storage` if not specified)
 
 This configuration:
 - Uses `uv` to automatically manage Python dependencies - no manual installation needed
