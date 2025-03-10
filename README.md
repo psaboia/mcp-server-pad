@@ -111,11 +111,15 @@ Managed automatically by `uv` through Claude Desktop:
 
 When using the PAD server with Claude Desktop, you can have natural conversations about your PAD cards. Here are some example interactions:
 
-![alt text](imgs/qa1.png)
+#### **Prompt: Can you show the image for the card 51866?**
 
-![alt text](imgs/qa2.png)
+![image](https://github.com/user-attachments/assets/e7092ac4-95da-4de2-ab3a-350f91159997)
 
-![alt text](imgs/qa3.png)
+#### **Prompt: List PAD projects created after Jully 2024.**
+![image](https://github.com/user-attachments/assets/0a582721-c879-42b4-b8cf-31aeec1ebe1a)
+
+#### **Prompt: Can you list the neural networks added via PAD API after July 2024**
+![image](https://github.com/user-attachments/assets/10f35f0d-b9e9-49b7-85e5-5ed13730f710)
 
 ### Working with Cards
 
