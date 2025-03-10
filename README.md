@@ -5,9 +5,9 @@ An MCP server implementation that provides a standardized interface to interact 
 ## Features
 
 - Card Management:
-  - Retrieve and list PAD test cards
-  - Access individual card details
-  - Process card images
+  - Retrieve and list PAD test cards with comprehensive metadata
+  - Access individual card details including camera type, quantities, and IDs
+  - Process and store card images with high-quality resizing
 - Neural Network Integration:
   - List available neural networks
   - Access network configurations
@@ -15,9 +15,12 @@ An MCP server implementation that provides a standardized interface to interact 
 - Project Organization:
   - Manage PAD projects
   - Handle card groups
+  - Track issues and samples
 - Image Processing:
-  - Card geometry handling
-  - Image analysis tools
+  - High-quality image resizing using Lanczos resampling
+  - Automatic image optimization (300px max width)
+  - Card geometry handling with coordinate scaling
+  - Detailed image metadata (dimensions, paths)
 
 ## Setup
 
@@ -75,19 +78,20 @@ The server uses filesystem storage for data persistence. Configure the storage l
 Start the server manually:
 
 ```bash
- python main.py
+uv run python pad.py
 ```
 
 The server exposes the following MCP tools:
 
-- `get_v2_cards()`: List all available cards
-- `get_v2_card_by_id(card_id)`: Get details for a specific card
+- `get_v2_cards()`: List all available cards with comprehensive metadata (camera type, quantities, IDs)
+- `get_v2_card_by_id(card_id)`: Get detailed card information including all metadata fields
 - `get_v2_neural_networks()`: List available neural networks
 - `get_v2_neural_network_by_id(nn_id)`: Get specific neural network details
 - `get_v2_projects()`: List all projects
-- `get_card_image_by_id(card_id)`: Retrieve and process card images
-- `load_image(path)`: Load image from disk
-- `load_card_geometry(path)`: Load v2 card geometry
+- `get_card_image_by_id(card_id)`: Retrieve, process, and optimize card images with metadata
+- `load_image(path)`: Load and process images from disk
+- `load_card_geometry(path)`: Load and scale v2 card geometry
+- `multiply_coordinates(data, factor)`: Scale geometry coordinates for processing
 
 ## API Integration
 
@@ -95,9 +99,108 @@ The server communicates with the PAD API at `https://pad.crc.nd.edu` and provide
 
 ## Dependencies
 
-- httpx: For API communication
-- mcp[cli]: MCP server functionality
-- Pillow: Image processing
+Managed automatically by `uv` through Claude Desktop:
+
+- httpx (>=0.28.1): For API communication
+- mcp[cli] (>=1.3.0): MCP server functionality
+- Pillow (>=11.1.0): High-quality image processing
+
+## Examples
+
+### Using with Claude Desktop
+
+When using the PAD server with Claude Desktop, you can have natural conversations about your PAD cards. Here are some example interactions:
+
+#### **Prompt: Can you show the image for the card 51866?**
+
+![image](https://github.com/user-attachments/assets/e7092ac4-95da-4de2-ab3a-350f91159997)
+
+#### **Prompt: List PAD projects created after Jully 2024.**
+![image](https://github.com/user-attachments/assets/0a582721-c879-42b4-b8cf-31aeec1ebe1a)
+
+#### **Prompt: Can you list the neural networks added via PAD API after July 2024**
+![image](https://github.com/user-attachments/assets/10f35f0d-b9e9-49b7-85e5-5ed13730f710)
+
+### Working with Cards
+
+```python
+# List all cards with metadata
+result = await get_v2_cards()
+if result["success"]:
+    cards = result["data"]
+    for card in cards:
+        print(f"Card {card['id']}:")
+        print(f"  Sample: {card['sample']}")
+        print(f"  Camera: {card['camera']}")
+        print(f"  Project ID: {card['project_id']}")
+
+# Get a specific card with full details
+card_result = await get_v2_card_by_id(42)
+if card_result["success"]:
+    card = card_result["data"]
+    print(f"Retrieved card {card['id']} from project {card['project_id']}")
+```
+
+### Image Processing
+
+```python
+# Retrieve and process a card image
+image_result = await get_card_image_by_id(42)
+if image_result["success"]:
+    image_data = image_result["data"]
+    print(f"Processed image saved to: {image_data['image_path']}")
+    print(f"Dimensions: {image_data['width']}x{image_data['height']}")
+```
+
+### Working with Geometry
+
+When using with Claude Desktop, the geometry is automatically scaled to match Claude's image width restrictions (300px). This ensures consistent analysis regardless of the display environment.
+
+```python
+# Load card geometry (automatically scaled for Claude Desktop)
+result = load_card_geometry()
+if result["success"]:
+    geometry = result["data"]
+    # Access lane positions (example with lane A)
+    lane_a = geometry["lane_boxes"][0]["A"]
+    print(f"Lane A coordinates: {lane_a}")
+    
+    # Scale coordinates if needed for different display sizes
+    scaled = multiply_coordinates(geometry, 1.5)
+    scaled_lane_a = scaled["lane_boxes"][0]["A"]
+    print(f"Scaled lane A: {scaled_lane_a}")
+```
+
+The geometry includes:
+- Card dimensions (scaled from 730x1220)
+- 12 lanes (A through L) with precise coordinates
+- Fiducial markers for alignment
+- QR code position
+- Swipe line location
+
+### Error Handling
+
+```python
+# Example of error handling with descriptive messages
+result = await get_v2_card_by_id(99999)  # Non-existent card
+if not result["success"]:
+    print(f"Error: {result['error']}")
+    print(f"Description: {result['description']}")
+    # Output might be:
+    # Error: Card not found
+    # Description: An error occurred: Card with ID 99999 does not exist
+```
+
+### Storage Configuration
+
+```bash
+# Configure custom storage location
+export FILESYSTEM_STORAGE="/custom/path/to/storage"
+uv run python pad.py
+
+# Or use default location (~/Documents/pad_storage)
+uv run python pad.py
+```
 
 ## Development
 
