@@ -69,12 +69,6 @@ This configuration:
 
 After configuring Claude Desktop with these settings, all PAD server tools (cards, neural networks, image processing) will be available through the MCP interface.
 
-### Storage Settings
-
-The server uses filesystem storage for data persistence. Configure the storage location using:
-
-- Environment variable: `FILESYSTEM_STORAGE`
-- Default location: `~/Documents/pad_storage`
 
 ## Usage
 
@@ -124,86 +118,7 @@ When using the PAD server with Claude Desktop, you can have natural conversation
 #### **Prompt: Can you list the neural networks added via PAD API after July 2024**
 ![image](https://github.com/user-attachments/assets/10f35f0d-b9e9-49b7-85e5-5ed13730f710)
 
-### Working with Cards
 
-```python
-# List all cards with metadata
-result = await get_v2_cards()
-if result["success"]:
-    cards = result["data"]
-    for card in cards:
-        print(f"Card {card['id']}:")
-        print(f"  Sample: {card['sample']}")
-        print(f"  Camera: {card['camera']}")
-        print(f"  Project ID: {card['project_id']}")
-
-# Get a specific card with full details
-card_result = await get_v2_card_by_id(42)
-if card_result["success"]:
-    card = card_result["data"]
-    print(f"Retrieved card {card['id']} from project {card['project_id']}")
-```
-
-### Image Processing
-
-```python
-# Retrieve and process a card image
-image_result = await get_card_image_by_id(42)
-if image_result["success"]:
-    image_data = image_result["data"]
-    print(f"Processed image saved to: {image_data['image_path']}")
-    print(f"Dimensions: {image_data['width']}x{image_data['height']}")
-```
-
-### Working with Geometry
-
-When using with Claude Desktop, the geometry is automatically scaled to match Claude's image width restrictions (300px). This ensures consistent analysis regardless of the display environment.
-
-```python
-# Load card geometry (automatically scaled for Claude Desktop)
-result = load_card_geometry()
-if result["success"]:
-    geometry = result["data"]
-    # Access lane positions (example with lane A)
-    lane_a = geometry["lane_boxes"][0]["A"]
-    print(f"Lane A coordinates: {lane_a}")
-    
-    # Scale coordinates if needed for different display sizes
-    scaled = multiply_coordinates(geometry, 1.5)
-    scaled_lane_a = scaled["lane_boxes"][0]["A"]
-    print(f"Scaled lane A: {scaled_lane_a}")
-```
-
-The geometry includes:
-- Card dimensions (scaled from 730x1220)
-- 12 lanes (A through L) with precise coordinates
-- Fiducial markers for alignment
-- QR code position
-- Swipe line location
-
-### Error Handling
-
-```python
-# Example of error handling with descriptive messages
-result = await get_v2_card_by_id(99999)  # Non-existent card
-if not result["success"]:
-    print(f"Error: {result['error']}")
-    print(f"Description: {result['description']}")
-    # Output might be:
-    # Error: Card not found
-    # Description: An error occurred: Card with ID 99999 does not exist
-```
-
-### Storage Configuration
-
-```bash
-# Configure custom storage location
-export FILESYSTEM_STORAGE="/custom/path/to/storage"
-uv run python pad.py
-
-# Or use default location (~/Documents/pad_storage)
-uv run python pad.py
-```
 
 ## Development
 
