@@ -112,11 +112,7 @@ async def get_v2_card_by_id(card_id: int) -> dict[str, Any]:
     Returns:
         {
             "success": True/False,
-            "data": {
-              "id": int,
-              "sample": str,
-              ...
-            } or {},
+            "data": <JSON‑LD document>,
             "error": "",
             "description": str
         }
@@ -147,8 +143,8 @@ async def get_v2_card_by_id(card_id: int) -> dict[str, Any]:
         "camera": raw_data.get("camera_type_1"),
         "quantity": raw_data.get("quantity"),
         "sample_id": raw_data.get("sample_id"),
-        "project_id": raw_data.get("project_id"),
-        "issue_id": raw_data.get("issue_id"),
+        "project_id": raw_data.get("project"),
+        "issue_id": raw_data.get("issue"),
         "image_path": full_filepath
         #"processed_file_location": processed_file_location
         # ... keep or omit other fields
@@ -178,21 +174,141 @@ async def get_v2_card_by_id(card_id: int) -> dict[str, Any]:
     # 5) Save raw bytes
     img.save(full_filepath)
 
+    # Build the JSON‑LD document using your ontology's context
+    json_ld = {
+        "@context": {
+            "@vocab": "https://pad.crc.nd.edu/ontology#",
+            "id": "identifier",
+            "sample": "hasSample",
+            "test": "hasTestType",
+            "notes": "hasNotes",
+            "camera": "hasCameraUsed",
+            "quantity": "hasQuantity",
+            "sample_id": "hasSampleId",
+            "project_id": "belongsToProject",
+            "issue_id": "hasIssue",
+            "image_path": "hasProcessedImage"
+        },
+        "@type": "AnalyticalCard",
+        "id": transformed["id"],
+        "sample": {
+            "@type": "Sample",
+            "name": transformed["sample"]
+        },
+        "test": {
+            "@type": "TestType",
+            "name": transformed["test"]
+        },
+        "notes": transformed["notes"],
+        "camera": transformed["camera"],
+        "quantity": transformed["quantity"],
+        "sample_id": transformed["sample_id"],
+        "project_id": transformed["project_id"],
+        "issue_id": transformed["issue_id"],
+        "image_path": transformed["image_path"],
+        "description": (
+            "This PAD card is a 58mm x 4104mm chromatography test strip with 12 lanes, "
+            "designed to produce a Color Barcode through chemical reactions. "
+            "The card records sample, test, and operator data for drug identification."
+        )
+    }
+
     # Return a standardized structure
     return {
         "success": True,
-        "data": transformed,
+        "data": json_ld,
         "error": "",
         "description":  """
-                        This PAD card (Q133248639) represents a chromatography-based analytical device printed on a 3″ x 4″ card.
+                        This PAD card (Q133248639) represents a chromatography-based analytical device printed on a 58mm x 104mm card.
                         It features 12 lanes delineated by wax barriers, a swipe line for sample application, and a unique Color Barcode produced
-                        by the reaction of the drug sample with pre-treated reagents, mixed by immersing the bottom 0.5" of the card in water. 
+                        by the reaction of the drug sample with pre-treated reagents, mixed by immersing the bottom 7mm of the card in water. 
                         Metadata includes sample name (the drug), test type (the reagents/lanes matrix used), camera, quantity (concentration), 
                         sample_id (card number in QR code), project_id, issue_id and image file location 
                         on the local filesystem. You can use MCP tool "load_image(path: str)" to load the image from disk.
                         The card's geometry is available using tool "load_card_geometry()" and is defined by a dictionary with units, card size, 
                         active area, lane number, lane boxes, outer fiducials, QR fiducials, wax fiducials, edges of QR code, and swipe line.
                         """
+    }
+
+@mcp.tool()
+async def get_v2_project_by_id(project_id: int) -> dict[str, Any]:
+    """
+    Retrieve a single PAD project by its ID and return its data as a JSON‑LD document,
+    compliant with the PAD ontology.
+    
+    Returns:
+      {
+          "success": True/False,
+          "data": <JSON‑LD document>,
+          "error": "",
+          "description": "Retrieved a PAD project with semantic JSON‑LD formatting."
+      }
+    """
+    # Construct the endpoint URL – adjust this if your API uses query parameters instead.
+    endpoint = f"/api/v2/projects/{project_id}"
+    raw_data = await call_api_get(endpoint)
+    if isinstance(raw_data, dict) and "error" in raw_data:
+        return make_error_result(raw_data["error"])
+    
+    # Transform raw API data into a simplified dictionary
+    transformed = {
+        "project_id": raw_data.get("id"),
+        "project_name": raw_data.get("project_name"),
+        "annotation": raw_data.get("annotation"),
+        "test_name": raw_data.get("test_name"),
+        # Assuming sample_names is returned as a list of sample names
+        "sample_names": raw_data.get("sample_names", []),
+        "neutral_filter": raw_data.get("neutral_filter"),
+        # Expected concentrations as a list, e.g., [20, 50, 80, 100]
+        #"concentrations": raw_data.get("concentrations", []),
+        "project_notes": raw_data.get("project_notes"),
+        "operator": raw_data.get("user_name")
+    }
+    
+    # Build the JSON‑LD document according to your ontology.
+    # Here, each sample name is wrapped as a Sample object.
+    json_ld = {
+        "@context": {
+            "@vocab": "https://pad.crc.nd.edu/ontology#",
+            "projectName": "hasProjectName",
+            "annotation": "hasAnnotation",
+            "testName": "hasTestType",
+            "sampleNames": "hasSample",
+            "neutralFilter": "hasNeutralFilter",
+            "concentrations": "hasConcentrations",
+            "projectNotes": "hasProjectNotes",
+            "operator": "performedBy",
+            "description": "rdfs:comment"
+        },
+        "@type": "Project",
+        "projectName": transformed["project_name"],
+        "annotation": transformed["annotation"],
+        "testName": transformed["test_name"],
+        "sampleNames": [
+            {
+                "@type": "Sample",
+                "drug": sample
+            } for sample in transformed["sample_names"]
+        ],
+        "neutralFilter": transformed["neutral_filter"],
+        #"concentrations": transformed["concentrations"],
+        "projectNotes": transformed["project_notes"],
+        "operator": {
+            "@type": "User",
+            "userName": transformed["operator"]
+        },
+        "description": (
+            "This project organizes PAD cards for drug testing. It specifies the samples (drugs) to be analyzed, "
+            "the test type to be applied, the neutral filter used, and the expected concentration levels (e.g., 20%, 50%, 80%, 100%). "
+            "Additionally, it includes annotations and operator details, forming the basis for training neural networks in drug identification."
+        )
+    }
+    
+    return {
+        "success": True,
+        "data": json_ld,
+        "error": "",
+        "description": "Retrieved a PAD project with semantic JSON‑LD formatting."
     }
 
 @mcp.tool()
@@ -358,7 +474,7 @@ geometry = {
     "date": "11/13/19",
     "version": "2.0",
     "card_size": {"x":730, "y":1220},
-    "active_area": [
+    "barcode_box": [
         {"x": 71, "y": 359},
         {"x": 707, "y": 849}
     ],
