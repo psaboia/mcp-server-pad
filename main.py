@@ -2,11 +2,12 @@ import io
 import json
 import os
 import sys
-from typing import Any, Optional
+from typing import Any, Optional, Dict
 
 import httpx
 from mcp.server.fastmcp import FastMCP, Image
 from PIL import Image as PILImage
+import numpy as np
 
 # Set up the MCP server
 mcp = FastMCP("paper_analytical_devices")
@@ -50,6 +51,70 @@ def make_error_result(error_message: str) -> dict[str, Any]:
         "description": f"An error occurred: {error_message}"
     }
 
+@mcp.tool()
+def compute_average_rgb(bbox: Dict[str, int], image_path: str) -> dict[str, Any]:
+    """
+    Compute the average RGB values within a bounding box of an image.
+    
+    Args:
+        bbox (dict): A dictionary specifying the bounding box with keys:
+                     "x1", "y1" (top-left corner) and "x2", "y2" (bottom-right corner).
+        image_path (str): The file system path to the image.
+    
+    Returns:
+        dict: A dictionary with the following structure:
+              {
+                  "success": True/False,
+                  "data": {
+                      "avg_r": <average red>,
+                      "avg_g": <average green>,
+                      "avg_b": <average blue>
+                  },
+                  "error": "",          # Error message if any
+                  "description": "Computed average RGB values for the specified bounding box."
+              }
+    """
+    try:
+        # Open image and ensure it's in RGB mode
+        img = PILImage.open(image_path)
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+        
+        # Extract bounding box coordinates from the bbox dict
+        x1 = bbox.get("x1")
+        y1 = bbox.get("y1")
+        x2 = bbox.get("x2")
+        y2 = bbox.get("y2")
+        
+        if None in (x1, y1, x2, y2):
+            raise ValueError("Bounding box must contain 'x1', 'y1', 'x2', and 'y2' keys.")
+        
+        # Crop the image to the bounding box
+        region = img.crop((x1, y1, x2, y2))
+        
+        # Convert the region to a numpy array and compute the average for each channel
+        arr = np.array(region)
+        avg_r = float(np.mean(arr[:, :, 0]))
+        avg_g = float(np.mean(arr[:, :, 1]))
+        avg_b = float(np.mean(arr[:, :, 2]))
+        
+        return {
+            "success": True,
+            "data": {
+                "avg_r": avg_r,
+                "avg_g": avg_g,
+                "avg_b": avg_b
+            },
+            "error": "",
+            "description": "Computed average RGB values for the specified bounding box."
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "data": {},
+            "error": str(e),
+            "description": "Failed to compute average RGB values due to an error."
+        }
 #
 # Example transformations: 
 #  - Return "data" as a list of simplified dicts
