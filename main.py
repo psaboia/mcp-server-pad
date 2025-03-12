@@ -275,7 +275,7 @@ async def get_v2_card_by_id(card_id: int) -> dict[str, Any]:
         "issue_id": transformed["issue_id"],
         "image_path": transformed["image_path"],
         "description": (
-            "This PAD card is a 58mm x 4104mm chromatography test strip with 12 lanes, "
+            "This PAD card is a 58mm x 104mm chromatography test strip with 12 lanes, "
             "designed to produce a Color Barcode through chemical reactions. "
             "The card records sample, test, and operator data for drug identification."
         )
