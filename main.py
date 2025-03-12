@@ -173,6 +173,9 @@ async def get_v2_cards() -> dict[str, Any]:
 async def get_v2_card_by_id(card_id: int) -> dict[str, Any]:
     """
     Retrieve a single card by its integer ID (v2 endpoint), then standardize the result.
+    The returned JSON‑LD document is built using an ontology context. To fully understand 
+    the PAD domain, please run the download_ontology tool to retrieve the complete ontology. 
+    This additional context is essential for in-depth semantic analysis.
 
     Returns:
         {
@@ -292,6 +295,9 @@ async def get_v2_card_by_id(card_id: int) -> dict[str, Any]:
                         on the local filesystem. You can use MCP tool "load_image(path: str)" to load the image from disk.
                         The card's geometry is available using tool "load_card_geometry()" and is defined by a dictionary with units, card size, 
                         active area, lane number, lane boxes, outer fiducials, QR fiducials, wax fiducials, edges of QR code, and swipe line.
+                        The returned JSON‑LD document is built using an ontology context. To fully understand 
+                        the PAD domain, please run the download_ontology tool to retrieve the complete ontology. 
+                        This additional context is essential for in-depth semantic analysis.
                         """
     }
 
@@ -728,5 +734,39 @@ def load_card_geometry() ->  dict[str, Any]:
         "description": f"Loaded the PAD card geometry configuration, which defines the layout of the card including dimensions, active area, lane boxes, and fiducial markers. Note that this is scaled to the image you get since MCP->Claude restricts width to {IMAGE_WIDTH}px."
     }
 
+@mcp.tool()
+async def download_ontology() -> dict[str, Any]:
+    """
+    Download the PAD ontology file (ontology.ttl) from pad.crc.nd.edu.
+
+    Returns:
+        dict: A dictionary with the following structure:
+            {
+                "success": True/False,
+                "data": <ontology file content as a string>,
+                "error": <error message if any>,
+                "description": "A summary of the action performed."
+            }
+    """
+    ontology_url = "https://pad.crc.nd.edu/ontology/ontology.ttl"
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(ontology_url, timeout=30)
+            response.raise_for_status()
+            ontology_content = response.text
+        return {
+            "success": True,
+            "data": ontology_content,
+            "error": "",
+            "description": "Successfully downloaded the PAD ontology file from pad.crc.nd.edu."
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "data": "",
+            "error": str(e),
+            "description": "Failed to download the PAD ontology file."
+        }
+    
 if __name__ == "__main__":
     mcp.run(transport="stdio")
