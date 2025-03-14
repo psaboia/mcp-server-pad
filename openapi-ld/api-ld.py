@@ -1,12 +1,14 @@
 import os
-from fastapi import FastAPI, HTTPException, Query, Path, Depends
-from fastapi.responses import JSONResponse, FileResponse
+import io
+from PIL import Image
+from fastapi import FastAPI, HTTPException, Query, Path, Depends, Request
+from fastapi.responses import JSONResponse, FileResponse, Response
 from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, Boolean, SmallInteger
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 import logging
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
+# from fastapi.middleware.trustedhost import TrustedHostMiddleware
+# from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -14,6 +16,10 @@ logger = logging.getLogger(__name__)
 
 # Get the database URL from the environment variable
 DATABASE_URL = os.environ.get("DATABASE_URL_LD", "mysql+pymysql://user:password@localhost/pad")
+
+# returned image size
+MAX_WIDTH = 50  # Adjust as needed
+MAX_HEIGHT = 100  # Adjust as needed
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -57,11 +63,21 @@ app = FastAPI(
     )
 )
 
-# Middleware to handle proxy headers
-app.add_middleware(ProxyHeadersMiddleware)
+# Middleware to log full client connection details
+@app.middleware("http")
+async def log_client_connection(request: Request, call_next):
+    client = request.client  # Contains host and port info
+    headers = dict(request.headers)
+    logger.info(f"Incoming request from {client.host}:{client.port}")
+    logger.info(f"Request headers: {headers}")
+    response = await call_next(request)
+    return response
 
-# Allow only requests from trusted hosts
-app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])  # Change "*" to allowed hosts/IPs
+# # Middleware to handle proxy headers
+# app.add_middleware(ProxyHeadersMiddleware)
+
+# # Allow only requests from trusted hosts
+# app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])  # Change "*" to allowed hosts/IPs
 
 @app.get("/api-ld/v3/cards/by-sample/{sample_id}", tags=["Cards"])
 def get_cards_by_sample(
@@ -114,7 +130,19 @@ def download_processed_card_image(
         raise HTTPException(status_code=404, detail="Processed image not found")
     
     logger.info(f"Serving image from: {card.processed_file_location}")
-    return FileResponse(card.processed_file_location, media_type="image/png", filename=os.path.basename(card.processed_file_location))
+    #return FileResponse(card.processed_file_location, media_type="image/png", filename=os.path.basename(card.processed_file_location))
+
+    # Open and resize the image
+    with Image.open(card.processed_file_location) as img:
+        img.thumbnail((MAX_WIDTH, MAX_HEIGHT))  # Resizes while maintaining aspect ratio
+
+        # Save the resized image to an in-memory file
+        img_byte_arr = io.BytesIO()
+        img.save(img_byte_arr, format="PNG")  # Save as PNG (or JPEG for smaller size)
+        img_byte_arr.seek(0)
+
+    # Return the resized image as a response
+    return Response(content=img_byte_arr.getvalue(), media_type="image/png")
 
 if __name__ == "__main__":
     import uvicorn
