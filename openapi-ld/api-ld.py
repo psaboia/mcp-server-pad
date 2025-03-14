@@ -41,8 +41,8 @@ class Card(Base):
     sample_id = Column(Integer, nullable=False, default=0)
     quantity = Column(SmallInteger, nullable=False, default=100)
     project_id = Column(Integer, nullable=False, default=0)
-    #deleted = Column(Boolean, nullable=False, default=False)
-    #issue_id = Column(Integer, nullable=True)
+    deleted = Column(Boolean, nullable=False, default=False)
+    issue_id = Column(Integer, nullable=True)
 
 # Dependency to get a database session.
 def get_db():
@@ -88,8 +88,8 @@ def get_cards_by_sample(
     Retrieve PAD cards by sample_id.
     Returns all cards (formatted as JSON‑LD) whose 'sample_id' field matches the provided value.
     """
-    #cards = db.query(Card).filter(Card.sample_id == sample_id, Card.deleted == False).all()
-    cards = db.query(Card).filter(Card.sample_id == sample_id).all()
+    cards = db.query(Card).filter(Card.sample_id == sample_id, Card.deleted == False).all()
+    #cards = db.query(Card).filter(Card.sample_id == sample_id).all()
     if not cards:
         raise HTTPException(status_code=404, detail="No cards found for the given sample_id")
 
@@ -146,5 +146,5 @@ def download_processed_card_image(
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8008)
+    uvicorn.run("api-ld:app", host="0.0.0.0", port=8008, reload=True)
 
