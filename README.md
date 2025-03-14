@@ -128,3 +128,27 @@ This server is built using FastMCP and follows the Model Context Protocol for to
 
 All interactions with the PAD API are handled securely through the server. Data storage is managed locally in the configured filesystem location.
 
+# JSON-LD API for GPTs
+Code is in the `openapi-ld` directory. This is a JSON-LD API for GPTs that provides a standardized interface for interacting with the PAD system. It allows developers to create and manage PAD projects, cards, and neural networks through a RESTful API.
+
+## Running code
+To run the code, 
+
+```bash
+uv run json_ld_api.py --proxy-headers --forwarded-allow-ips="*" --root-path /api-ld/v3
+```
+
+## API Endpoints
+The API provides the following endpoints:
+
+### Get Cards By Sample
+
+```http
+/api-ld/v3/cards/by-sample/{sample_id}
+```
+
+### Get Card image by ID
+
+```http
+/api-ld/v3/cards/{id}/download-image
+```
