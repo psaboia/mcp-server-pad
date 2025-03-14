@@ -1,0 +1,147 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PAD LLM-Friendly API",
+    "description": "This API provides access to Paper Analytical Devices (PAD) data in a semantically rich JSONâ€‘LD format. Interactive API documentation is available at /docs (Swagger UI) and /redoc (ReDoc).",
+    "version": "2.0.0"
+  },
+  "paths": {
+    "/api-ld/v3/cards/by-sample/{sample_id}": {
+      "get": {
+        "tags": [
+          "Cards"
+        ],
+        "summary": "Get Cards By Sample",
+        "description": "Retrieve PAD cards by sample_id.\nReturns all cards (formatted as JSONâ€‘LD) whose 'sample_id' field matches the provided value.",
+        "operationId": "get_cards_by_sample_api_ld_v3_cards_by_sample__sample_id__get",
+        "parameters": [
+          {
+            "name": "sample_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The sample identifier associated with the PAD cards.",
+              "title": "Sample Id"
+            },
+            "description": "The sample identifier associated with the PAD cards."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api-ld/v3/cards/{id}/download-image": {
+      "get": {
+        "tags": [
+          "Cards"
+        ],
+        "summary": "Download Processed Card Image",
+        "description": "Download the processed card image for a given card ID.\nReturns the image file in PNG format.",
+        "operationId": "download_processed_card_image_api_ld_v3_cards__id__download_image_get",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "The unique identifier of the PAD card.",
+              "title": "Id"
+            },
+            "description": "The unique identifier of the PAD card."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
+
