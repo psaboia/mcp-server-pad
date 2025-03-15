@@ -185,7 +185,70 @@ def get_project_name_by_id(db: Session, project_id: int) -> str:
         raise HTTPException(status_code=404, detail="Project not found")
     return project.project_name
 
-@app.get("/api-ld/v3/cards/by-sample/{sample_id}", tags=["Cards"])
+@app.get("/api-ld/v3/cards/by-sample/{sample_id}", tags=["Cards"], responses={
+    200: {
+        "description": "Successful retrieval of a PAD card.",
+        "content": {
+            "application/json": {
+                "example": {
+                    "success": True,
+                    "data": [
+                        {
+                        "@context": {
+                            "@vocab": "https://pad.crc.nd.edu/ontology#",
+                            "id": "identifier",
+                            "date_of_creation": "hasCreationDate",
+                            "processed_file_location": "hasProcessedImage",
+                            "raw_file_location": "hasRawImage",
+                            "camera_type_1": "hasCameraUsed",
+                            "notes": "hasNotes",
+                            "sample_id": "hasSampleId",
+                            "quantity": "hasQuantity",
+                            "sample_name": "hasSample",
+                            "test_name": "hasLayout",
+                            "user_name": "performedBy",
+                            "project": "belongsToProject",
+                            "producesColorBarcode": "producesColorBarcode",
+                            "barcodeBoundingBox": "hasBarcodeBoundingBox",
+                            "description": "rdfs:comment"
+                        },
+                        "@type": "AnalyticalCard",
+                        "id": 18429,
+                        "sample_name": {
+                            "@type": "Sample",
+                            "name": "tetracycline"
+                        },
+                        "test_name": {
+                            "@type": "Layout",
+                            "name": "12LanePADKenya2015"
+                        },
+                        "user_name": {
+                            "@type": "User",
+                            "name": "api-OUDPXFH17PEGKUW3FM4Z"
+                        },
+                        "project": {
+                            "@type": "Project",
+                            "name": "FHI2020",
+                            "id": 11
+                        },
+                        "notes": "batch=n/a, quantity=100%, p s",
+                        "processed_file_location": "/var/www/html/images/padimages/processed/10000/18429_processed.png",
+                        "date_of_creation": "2020-06-03T16:05:05",
+                        "raw_file_location": "/var/www/html/images/padimages/raw/10000/18429_raw.png",
+                        "camera_type_1": "Google Pixel 3a",
+                        "sample_id": 52937,
+                        "quantity": 100,
+                        "issue_id": 2,
+                        "description": "This PAD Analytical Card with sample_id 52937 is a 58mm x 104mm chromatography card with 12 lanes. A swipe line separates the card, and reagents pre-applied below the swipe line react with the drug sample to generate a unique Color Barcode. The layout defines key regions including the barcode bounding box used for image rectification and analysis. The card is associated with a project and operator, and its metadata includes details on sample, test, and processing."
+                        }
+                    ],
+                    "error": "",
+                    "summary": "Retrieved 1 PAD cards for sample 52937 in semantic JSON‑LD format."
+                }
+            }
+        }
+    }
+})
 def get_cards_by_sample(
     sample_id: int = Path(..., description="The sample identifier associated with the PAD cards."),
     db: Session = Depends(get_db)
@@ -239,7 +302,7 @@ def get_cards_by_sample(
 def get_all_projects(db: Session = Depends(get_db)):
     """
     Retrieve all PAD projects.
-    Returns projects as JSON‑LD documents using the database column names mapped via the context.
+    Returns projects as JSON-LD documents using the database column names mapped via the context.
     """
     projects = db.query(Project).all()
     if not projects:
