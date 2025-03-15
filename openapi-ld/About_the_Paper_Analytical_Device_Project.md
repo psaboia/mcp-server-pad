@@ -2,6 +2,18 @@
 
 **Wikidata Entry:** [Paper Analytical Device (Q133248639)](https://www.wikidata.org/wiki/Q133248639)
 
+## The Mission
+Many of the pharmaceuticals that are purchased in the developing world are substandard or outright fake drugs. Although there is no global system for monitoring the quality of medicine, study after study reveals pervasive poor quality and products that are worthless or even harmful to patients. Many countries in the developing world do not have the technological infrastructure or regulatory resources to keep low quality medicines off the market shelves. And since the pharmaceutical trade is a lucrative global market, low quality medicine can cross borders and harm people anywhere in the world.
+
+### Low quality pharmaceuticals are a global problem
+The World Health Organization estimates that 10-30% of the pharmaceuticals that are purchased in the developing world are substandard or outright fake drugs. Many countries in the developing world do not have the technological infrastructure or regulatory resources to keep low quality medicines off the market shelves. And since the pharmaceutical trade is a lucrative global market, low quality medicine can cross borders and harm people anywhere in the world.
+
+### We are making tools to solve this problem.
+Paper analytical devices (PADs) are test cards that can quickly determine whether a drug tablet contains the correct medicines. They are cheap and easy to use. They don’t require power, chemicals, solvents, or any expensive instruments, so they can be deployed rapidly at large scale wherever a problem with pharmaceutical quality is suspected.
+
+### We are leveling the playing field.
+These little test cards could change the balance of power between sellers and buyers. Right now, most buyers have to trust what the seller tells them about the quality of the pharmaceuticals they purchase. Unscrupulous manufacturers and distributors know that there is little chance that their medicines will be screened in a lab. These paper test cards don’t need a lab, and they will enable people all over the world to quickly detect low quality medicines and remove them from the market.
+
 ## Introduction
 
 A **Paper Analytical Device (PAD)** is a 58mm x 104mm chromatography card printed with wax lines that form hydrophobic barriers, creating multiple test lanes. It is used to identify drugs and detect potential counterfeits through a color-based reaction pattern. The process involves applying a sample (crushed drug) to a swipe line, partially submerging the card in water, and analyzing the resulting Color Barcode with a neural network.
