@@ -298,7 +298,113 @@ def get_cards_by_sample(
         "summary": f"Retrieved {len(json_ld_cards)} PAD cards for sample {sample_id} in semantic JSON‑LD format."
     })
 
-@app.get("/api-ld/v3/projects", tags=["Projects"])
+@app.get("/api-ld/v3/projects", tags=["Projects"], responses={
+    200: {
+        "description": "Successful retrieval of a PAD card.",
+        "content": {
+            "application/json": {
+                "example": {
+                    "success": True,
+                    "data": [    
+                        {
+                            "@context": {
+                                "@vocab": "https://pad.crc.nd.edu/ontology#",
+                                "id": "identifier",
+                                "project_name": "hasProjectName",
+                                "annotation": "hasAnnotation",
+                                "test_name": "hasLayout",
+                                "sample_names": "hasSample",
+                                "neutral_filler": "hasNeutralFilter",
+                                "concentrations": "hasConcentrations",
+                                "notes": "hasProjectNotes",
+                                "user_name": "performedBy",
+                                "description": "rdfs:comment"
+                            },
+                            "@type": "Project",
+                            "id": 5,
+                            "project_name": "AMR Kenya",
+                            "annotation": "2021AMR",
+                            "test_name": {
+                                "@type": "Layout",
+                                "name": "12LanePADKenya2015"
+                            },
+                            "sample_names": [
+                                {
+                                "@type": "Sample",
+                                "drug": "Amoxicillin"
+                                },
+                                {
+                                "@type": "Sample",
+                                "drug": "Amoxyclav"
+                                },
+                                {
+                                "@type": "Sample",
+                                "drug": "Ampicillin"
+                                },
+                                {
+                                "@type": "Sample",
+                                "drug": "Azithromycin"
+                                },
+                                {
+                                "@type": "Sample",
+                                "drug": "Benzyl Penicillin"
+                                },
+                                {
+                                "@type": "Sample",
+                                "drug": "Blank PAD (no reagents)"
+                                },
+                                {
+                                "@type": "Sample",
+                                "drug": "Blank PAD (stamped with reagents)"
+                                },
+                                {
+                                "@type": "Sample",
+                                "drug": "Ceftriaxone"
+                                },
+                                {
+                                "@type": "Sample",
+                                "drug": "Ciprofloxacin"
+                                },
+                                {
+                                "@type": "Sample",
+                                "drug": "Doxycycline"
+                                },
+                                {
+                                "@type": "Sample",
+                                "drug": "Isoniazid"
+                                },
+                                {
+                                "@type": "Sample",
+                                "drug": "Lactose"
+                                },
+                                {
+                                "@type": "Sample",
+                                "drug": "Starch (Maize)"
+                                },
+                                {
+                                "@type": "Sample",
+                                "drug": "Unknown"
+                                }
+                            ],
+                            "neutral_filler": "",
+                            "concentrations": [
+                                100
+                            ],
+                            "notes": "Will be using FHI-360 PAD reader, but that does not include amoxyclav.  Some drugs have multiple category names, need to double check I have the right ones here.",
+                            "user_name": {
+                                "@type": "User",
+                                "userName": "Lieberman"
+                            },
+                            "description": "This project groups PAD cards for drug testing. It details the samples (drugs) to be analyzed, the test method to be applied, and the expected concentration levels (100). It also includes project annotations and operator information."
+                        }
+                    ],
+                    "error": "",
+                    "summary": "Retrieved a PAD card in semantic JSON‑LD format."
+                }
+            }
+        }
+    }
+})
 def get_all_projects(db: Session = Depends(get_db)):
     """
     Retrieve all PAD projects.
