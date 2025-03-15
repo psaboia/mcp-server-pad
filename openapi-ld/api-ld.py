@@ -3,7 +3,7 @@ import io
 from PIL import Image
 from fastapi import FastAPI, HTTPException, Query, Path, Depends, Request
 from fastapi.responses import JSONResponse, FileResponse, Response
-from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, Boolean, SmallInteger
+from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, Boolean, SmallInteger, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 import logging
@@ -44,6 +44,64 @@ class Card(Base):
     deleted = Column(Boolean, nullable=False, default=False)
     issue_id = Column(Integer, nullable=True)
 
+class Project(Base):
+    __tablename__ = "projects"  # Adjust this if your table name is different
+
+    # Primary key, auto-incremented; maps to "identifier"
+    id = Column(Integer, primary_key=True, index=True)
+    
+    # Administrator name; maps to "performedBy" (User)
+    user_name = Column(String(64), nullable=False, index=True)
+    
+    # Project name (category); maps to "hasProjectName"
+    project_name = Column(String(64), nullable=False, index=True)
+    
+    # Card annotation; maps to "hasAnnotation" (optional)
+    annotation = Column(String(8), nullable=True)
+    
+    # Card layout/test type; maps to "hasTestType"
+    test_name = Column(String(64), nullable=False)
+    
+    # Variable list of drugs; stored as JSON; maps to "hasSample"
+    sample_names = Column(JSON, nullable=True)
+    
+    # Filler for less than 100% concentration; maps to "hasNeutralFilter"
+    neutral_filler = Column(String(64), nullable=True)
+    
+    # 20% quantity flag; maps to a concentration value (20%); stored as tinyint (0/1)
+    qpc20 = Column(SmallInteger, nullable=False, default=0)
+    
+    # 50% quantity flag; maps to a concentration value (50%); stored as tinyint (0/1)
+    qpc50 = Column(SmallInteger, nullable=False, default=0)
+    
+    # 80% quantity flag; maps to a concentration value (80%); stored as tinyint (0/1)
+    qpc80 = Column(SmallInteger, nullable=False, default=0)
+    
+    # 100% quantity flag; maps to a concentration value (100%); stored as tinyint (0/1)
+    qpc100 = Column(SmallInteger, nullable=False, default=1)
+    
+    # Notes on project; maps to "hasNotes" (optional)
+    notes = Column(Text, nullable=True)
+
+context = {
+            "@vocab": "https://pad.crc.nd.edu/ontology#",
+            "id": "identifier",
+            "date_of_creation": "hasCreationDate",             # Maps date_of_creation
+            "processed_file_location": "hasProcessedImage",    # Maps processed_file_location
+            "raw_file_location": "hasRawImage",                # Maps raw_file_location
+            "camera_type_1": "hasCameraUsed",                  # Maps camera_type_1
+            "notes": "hasNotes",                               # Maps notes
+            "sample_id": "hasSampleId",                        # Maps sample_id
+            "quantity": "hasQuantity",                         # Maps quantity
+            "sample_name": "hasSample",                        # Maps sample_name
+            "test_name": "hasLayout",                          # Maps test_name
+            "user_name": "performedBy",                        # Maps user_name
+            "project": "belongsToProject",                     # Maps project_id (or lookup)
+            "producesColorBarcode": "producesColorBarcode",    # Static/dummy mapping
+            "barcodeBoundingBox": "hasBarcodeBoundingBox",     # Static/dummy mapping
+            "description": "rdfs:comment"
+}
+
 # Dependency to get a database session.
 def get_db():
     db = SessionLocal()
@@ -79,6 +137,13 @@ async def log_client_connection(request: Request, call_next):
 # # Allow only requests from trusted hosts
 # app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])  # Change "*" to allowed hosts/IPs
 
+# dereference project id
+def get_project_name_by_id(db: Session, project_id: int) -> str:
+    project = db.query(Project).filter(Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return project.project_name
+
 @app.get("/api-ld/v3/cards/by-sample/{sample_id}", tags=["Cards"])
 def get_cards_by_sample(
     sample_id: int = Path(..., description="The sample identifier associated with the PAD cards."),
@@ -95,15 +160,31 @@ def get_cards_by_sample(
 
     json_ld_cards = []
     for card in cards:
+        # Dereference project_id to get the project name
+        project_name = get_project_name_by_id(db, card.project_id)
+
         json_ld_cards.append({
-            "@context": "https://pad.crc.nd.edu/ontology#",
+            "@context": context,
             "@type": "AnalyticalCard",
             "id": card.id,
-            "sample": { "@type": "Sample", "name": card.sample_name },
-            "test": { "@type": "TestType", "name": card.test_name },
+            "sample_name": { "@type": "Sample", "name": card.sample_name },
+            "test_name": { "@type": "Layout", "name": card.test_name },
+            "user_name": { "@type": "User", "name": card.user_name },
+            "project": { "@type": "Project", "name": project_name, "id": card.project_id },
             "notes": card.notes,
-            "image_path": card.processed_file_location,
-            "description": f"PAD card with sample_id {card.sample_id}."
+            "processed_file_location": card.processed_file_location,
+            "date_of_creation": card.date_of_creation.isoformat() if card.date_of_creation else None,
+            "raw_file_location": card.raw_file_location,
+            "camera_type_1": card.camera_type_1,
+            "sample_id": card.sample_id,
+            "quantity": card.quantity,
+            "issue_id": card.issue_id,
+            "description": (
+                f"This PAD Analytical Card with sample_id {card.sample_id} is a 58mm x 104mm chromatography card with 12 lanes. A swipe line separates the card, "
+                "and reagents pre-applied below the swipe line react with the drug sample to generate a unique Color Barcode. "
+                "The layout defines key regions including the barcode bounding box used for image rectification and analysis. "
+                "The card is associated with a project and operator, and its metadata includes details on sample, test, and processing."
+            )
         })
 
     return JSONResponse(content={
