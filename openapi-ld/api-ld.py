@@ -421,7 +421,21 @@ def get_all_projects(db: Session = Depends(get_db)):
         "summary": f"Retrieved {len(json_ld_projects)} PAD projects in semantic JSON‑LD format."
     })
 
-@app.get("/api-ld/v3/cards/{id}/download-image", tags=["Cards"])
+@app.get("/api-ld/v3/cards/{id}/download-image", tags=["Cards"], responses={
+    200: {
+        "description": "Successful retrieval of the processed card image.",
+        "content": {
+            "image/png": {
+                "schema": {
+                    "type": "string",
+                    "format": "binary"
+                },
+                "example": "Binary PNG image data (this is a placeholder)"
+            }
+        }
+    },
+    422: {"description": "Validation Error"}
+})
 def download_processed_card_image(
     id: int = Path(..., description="The unique identifier of the PAD card."),
     db: Session = Depends(get_db)
