@@ -47,43 +47,84 @@ class Card(Base):
 class Project(Base):
     __tablename__ = "projects"  # Adjust this if your table name is different
 
-    # Primary key, auto-incremented; maps to "identifier"
-    id = Column(Integer, primary_key=True, index=True)
-    
-    # Administrator name; maps to "performedBy" (User)
-    user_name = Column(String(64), nullable=False, index=True)
-    
-    # Project name (category); maps to "hasProjectName"
-    project_name = Column(String(64), nullable=False, index=True)
-    
-    # Card annotation; maps to "hasAnnotation" (optional)
-    annotation = Column(String(8), nullable=True)
-    
-    # Card layout/test type; maps to "hasTestType"
-    test_name = Column(String(64), nullable=False)
-    
-    # Variable list of drugs; stored as JSON; maps to "hasSample"
-    sample_names = Column(JSON, nullable=True)
-    
-    # Filler for less than 100% concentration; maps to "hasNeutralFilter"
-    neutral_filler = Column(String(64), nullable=True)
-    
-    # 20% quantity flag; maps to a concentration value (20%); stored as tinyint (0/1)
-    qpc20 = Column(SmallInteger, nullable=False, default=0)
-    
-    # 50% quantity flag; maps to a concentration value (50%); stored as tinyint (0/1)
-    qpc50 = Column(SmallInteger, nullable=False, default=0)
-    
-    # 80% quantity flag; maps to a concentration value (80%); stored as tinyint (0/1)
-    qpc80 = Column(SmallInteger, nullable=False, default=0)
-    
-    # 100% quantity flag; maps to a concentration value (100%); stored as tinyint (0/1)
-    qpc100 = Column(SmallInteger, nullable=False, default=1)
-    
-    # Notes on project; maps to "hasNotes" (optional)
-    notes = Column(Text, nullable=True)
+    id = Column(Integer, primary_key=True, index=True)              # Primary key, auto-incremented; maps to "identifier"
+    user_name = Column(String(64), nullable=False, index=True)      # Administrator name; maps to "performedBy" (User)
+    project_name = Column(String(64), nullable=False, index=True)   # Project name (category); maps to "hasProjectName"
+    annotation = Column(String(8), nullable=True)                   # Card annotation; maps to "hasAnnotation" (optional)
+    test_name = Column(String(64), nullable=False)                  # Card layout/test type; maps to "hasTestType"
+    sample_names = Column(JSON, nullable=True)                      # Variable list of drugs; stored as JSON; maps to "hasSample"
+    neutral_filler = Column(String(64), nullable=True)              # Filler for less than 100% concentration; maps to "hasNeutralFilter"
+    qpc20 = Column(SmallInteger, nullable=False, default=0)         # 20% quantity flag; maps to a concentration value (20%); stored as tinyint (0/1)
+    qpc50 = Column(SmallInteger, nullable=False, default=0)         # 50% quantity flag; maps to a concentration value (50%); stored as tinyint (0/1)
+    qpc80 = Column(SmallInteger, nullable=False, default=0)         # 80% quantity flag; maps to a concentration value (80%); stored as tinyint (0/1)
+    qpc100 = Column(SmallInteger, nullable=False, default=1)        # 100% quantity flag; maps to a concentration value (100%); stored as tinyint (0/1)
+    notes = Column(Text, nullable=True)                             # Notes on project; maps to "hasNotes" (optional)
 
-context = {
+def project_to_jsonld(proj: Project) -> dict:
+    """
+    Convert a Project instance into a JSON‑LD document.
+    Database field names are preserved, while the @context maps them to ontology properties.
+    """
+    # Build the concentrations array based on the qpc columns.
+    concentrations = []
+    if proj.qpc20:
+        concentrations.append(20)
+    if proj.qpc50:
+        concentrations.append(50)
+    if proj.qpc80:
+        concentrations.append(80)
+    if proj.qpc100:
+        concentrations.append(100)
+    
+    # Process sample_names JSON column: if it's a dict with a "sample_names" key, extract its list.
+    sample_names = []
+    if proj.sample_names:
+        # Check if sample_names is a dictionary with key "sample_names"
+        if isinstance(proj.sample_names, dict):
+            names_list = proj.sample_names.get("sample_names", [])
+        else:
+            names_list = proj.sample_names  # Otherwise assume it's a list
+        for s in names_list:
+            sample_names.append({
+                "@type": "Sample",
+                "drug": s
+            })
+
+    return {
+        "@context": {
+            "@vocab": "https://pad.crc.nd.edu/ontology#",
+            "id": "identifier",
+            "project_name": "hasProjectName",       # Maps project_name
+            "annotation": "hasAnnotation",          # Maps annotation
+            "test_name": "hasLayout",             # Maps test_name
+            "sample_names": "hasSample",            # Maps sample_names
+            "neutral_filler": "hasNeutralFilter",   # Maps neutral_filler
+            "concentrations": "hasConcentrations",  # Derived from qpc20, qpc50, qpc80, qpc100
+            "notes": "hasProjectNotes",             # Maps notes
+            "user_name": "performedBy",             # Maps user_name
+            "description": "rdfs:comment"
+        },
+        "@type": "Project",
+        "id": proj.id,
+        "project_name": proj.project_name,
+        "annotation": proj.annotation,
+        "test_name": { "@type": "Layout", "name": proj.test_name },
+        "sample_names": sample_names,
+        "neutral_filler": proj.neutral_filler,
+        "concentrations": concentrations,
+        "notes": proj.notes,
+        "user_name": {
+            "@type": "User",
+            "userName": proj.user_name
+        },
+        "description": (
+            "This project groups PAD cards for drug testing. It details the samples (drugs) to be analyzed, "
+            "the test method to be applied, and the expected concentration levels (" + ", ".join(str(c) for c in concentrations) + "). "
+            "It also includes project annotations and operator information."
+        )
+    }
+
+card_context = {
             "@vocab": "https://pad.crc.nd.edu/ontology#",
             "id": "identifier",
             "date_of_creation": "hasCreationDate",             # Maps date_of_creation
@@ -164,7 +205,7 @@ def get_cards_by_sample(
         project_name = get_project_name_by_id(db, card.project_id)
 
         json_ld_cards.append({
-            "@context": context,
+            "@context": card_context,
             "@type": "AnalyticalCard",
             "id": card.id,
             "sample_name": { "@type": "Sample", "name": card.sample_name },
@@ -192,6 +233,23 @@ def get_cards_by_sample(
         "data": json_ld_cards,
         "error": "",
         "summary": f"Retrieved {len(json_ld_cards)} PAD cards for sample {sample_id} in semantic JSON‑LD format."
+    })
+
+@app.get("/api-ld/v3/projects", tags=["Projects"])
+def get_all_projects(db: Session = Depends(get_db)):
+    """
+    Retrieve all PAD projects.
+    Returns projects as JSON‑LD documents using the database column names mapped via the context.
+    """
+    projects = db.query(Project).all()
+    if not projects:
+        raise HTTPException(status_code=404, detail="No projects found")
+    json_ld_projects = [project_to_jsonld(proj) for proj in projects]
+    return JSONResponse(content={
+        "success": True,
+        "data": json_ld_projects,
+        "error": "",
+        "summary": f"Retrieved {len(json_ld_projects)} PAD projects in semantic JSON‑LD format."
     })
 
 @app.get("/api-ld/v3/cards/{id}/download-image", tags=["Cards"])
